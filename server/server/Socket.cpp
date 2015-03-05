@@ -152,7 +152,7 @@ std::string Socket::ReceiveLine() {
 }
 
 void Socket::SendLine(std::string s) {
-  s += '/n';
+  s += '\n';
   send(s_,s.c_str(),s.length(),0);
 }
 

@@ -55,7 +55,6 @@ public class MainActivity extends Activity
 				if( words.equals("ok") == true )
 				{
 					Toast.makeText(MainActivity.this, "来自服务器的问候：登陆成功！！欢迎使用~",Toast.LENGTH_LONG).show();
-					finish();
 				}
 				else if(words.equals("did not login") )
 				{
@@ -68,61 +67,6 @@ public class MainActivity extends Activity
 			}
 		};
 		
-		class GetThread implements Runnable
-		{
-			public void getMsg()
-			{
-				try 
-				{
-					Scanner in = new Scanner(socket.getInputStream());
-					String gotmsg = in.nextLine();
-					Message msg = new Message();
-					msg.obj = gotmsg;
-					MainActivity.this.handler.sendMessage(msg);
-					
-				} catch (UnknownHostException e) 
-				{
-					Message msg = new Message();
-					msg.obj = "net error";
-					MainActivity.this.handler.sendMessage(msg);
-				} catch (IOException e) 
-				{
-					Message msg = new Message();
-					msg.obj = "net error";
-					MainActivity.this.handler.sendMessage(msg);
-				}
-				
-			}
-			
-			@Override
-			public void run() 
-			{
-				try 
-				{
-					socket = new Socket();
-					socket.connect(new InetSocketAddress(ip, port) , 5000);
-				} catch (UnknownHostException e) 
-				{
-					Message msg = new Message();
-					msg.obj = "did not login";
-					MainActivity.this.handler.sendMessage(msg);
-				} catch (IOException e) {
-					Message msg = new Message();
-					msg.obj = "did not login";
-					MainActivity.this.handler.sendMessage(msg);
-				}
-				
-				if( socket != null)
-					getMsg();
-				else
-				{
-					Message msg = new Message();
-					msg.obj = "did not login";
-					MainActivity.this.handler.sendMessage(msg);
-				}
-			}
-		}
-		
 		login_button.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -131,10 +75,11 @@ public class MainActivity extends Activity
 				// TODO Auto-generated method stub
 				ip = ip_box.getText().toString();
 				client_socket_manager = new ClientSocketManager(ip, port, handler);
-				boolean logged = client_socket_manager.login();
+				boolean logged = client_socket_manager.loginBlocked();
 				if(!logged)
 					return;
-				client_socket_manager.openGetThread();
+				client_socket_manager.setGBK(true);
+				client_socket_manager.startGetThread();
 			}
 			
 		});

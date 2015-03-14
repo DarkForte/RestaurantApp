@@ -14,7 +14,7 @@ int main()
 	while(true)
 	{
 		Socket *s = socket.Accept();
-		s->SendLine("Hello!");
+		s->SendLine("»¶Ó­!");
 	
 		cout<<"Hello!"<<endl;
 	}
